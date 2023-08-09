@@ -1,39 +1,40 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
-import { useState,useEffect } from 'react'
-import io,{Socket} from "socket.io-client"
-import Message from '@/components/Message'
-import MessageInput from '@/components/MessageInput'
+import Head from "next/head";
+import Image from "next/image";
+import { Inter } from "next/font/google";
+import styles from "@/styles/Home.module.css";
+import { useState, useEffect } from "react";
+import io, { Socket } from "socket.io-client";
+import Message from "@/components/Message";
+import MessageInput from "@/components/MessageInput";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
-  const [socket,setSocket] = useState()
-  const [messages,setMessages] = useState()
+  const [socket, setSocket] = useState();
+  const [messages, setMessages] = useState();
 
-  useEffect(()=>{
+  useEffect(() => {
+    const newSocket = io("http://localhost:8081");
+    setSocket(newSocket);
+  }, [setSocket]);
+  const messageListner = (message) => {
+    console.log(message);
+    setMessages([...messages, message]);
+  };
 
-    const newSocket =io("http://localhost:8081")
-    setSocket(newSocket)
-  },[setSocket])
-  const messageListner = (message)=>{
-    setMessages([...messages,message])
-  }
-
-  useEffect(()=>{
-socket?.on("message",messageListner)
-return ()=>{socket?.off("message",messageListner)}
-  },[])
-  const send = (value)=>{
-    socket?.emit("message",value)
-
-  }
+  useEffect(() => {
+    socket?.on("message", messageListner);
+    return () => {
+      socket?.off("message", messageListner);
+    };
+  }, []);
+  const send = (value) => {
+    socket?.emit("message", value);
+  };
   return (
     <>
-    <MessageInput/>
-    <Message/>
+      <MessageInput send={send} />
+      <Message messages={messages} />
     </>
-  )
+  );
 }

@@ -1,9 +1,14 @@
-import React from 'react'
+import React from "react";
 
-const Message = () => {
+const Message = ({ messages }) => {
   return (
-    <div>Message</div>
-  )
-}
+    <div>
+      {messages &&
+        messages.map((message, index) => {
+          return <div key={index}>{message}</div>;
+        })}
+    </div>
+  );
+};
 
-export default Message
+export default Message;
